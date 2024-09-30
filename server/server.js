@@ -31,20 +31,10 @@ mongoose
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(","); // Get allowed origins from environment variable
-
 // CORS setup to allow frontend requests
 app.use(
   cors({
-    // origin: process.env.CLIENT_BASE_URL, // Make sure this matches your frontend address
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: process.env.CLIENT_BASE_URL, // Make sure this matches your frontend address
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
