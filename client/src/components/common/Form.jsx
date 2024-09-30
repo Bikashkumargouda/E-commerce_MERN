@@ -2,10 +2,10 @@
 // import { SelectContent } from "@radix-ui/react-select"
 import React from 'react'
 import { Input } from '../ui/input';
-import { Label } from '../ui/Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { Button } from "../ui/button";
+import { Label } from '../ui/label';
 
 
 const types = {
@@ -91,7 +91,7 @@ const Form = ({ formControls, formData, setFormData, onSubmit, buttonText, isBtn
           formControls.map((controlItem) => {
             return (
               <div key={controlItem.name} className='grid w-full gap-1.5'>
-                <Label htmlFor="controlItem.name" className='mb-1'>{controlItem.label}</Label>
+                <Label htmlFor={controlItem.name} className='mb-1'>{controlItem.label}</Label>
                 {
                   renderInputsByComponetsType(controlItem)
                 }
