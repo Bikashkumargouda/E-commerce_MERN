@@ -67,9 +67,21 @@ const loginUser = async (req, res) => {
       "CLIENT_SECRET_KEY"
       // { expiresIn: "60m" }
     );
-    res.cookie("token", token, { httpOnly: true, secure: true }).json({
+    // res.cookie("token", token, { httpOnly: true, secure: true }).json({
+    //   success: true,
+    //   message: "User Logged in successfully",
+    //   user: {
+    //     email: checkUser.email,
+    //     role: checkUser.role,
+    //     id: checkUser._id,
+    //     userName: checkUser.userName,
+    //   },
+    // });
+
+    res.status(200).json({
       success: true,
       message: "User Logged in successfully",
+      token,
       user: {
         email: checkUser.email,
         role: checkUser.role,
@@ -97,8 +109,29 @@ const logOutUser = (req, res) => {
 };
 
 // AuthMiddleware
+// const authMiddleWare = async (req, res, next) => {
+//   const token = req.cookies.token;
+//   if (!token)
+//     return res.status(401).json({
+//       success: false,
+//       message: "No token, authorization denied",
+//     });
+//   try {
+//     const decoded = jwt.verify(token, "CLIENT_SECRET_KEY");
+//     req.user = decoded;
+//     next();
+//   } catch (error) {
+//     console.error(error);
+//     res.status(401).json({
+//       success: false,
+//       message: "Token is not valid, authorization denied",
+//     });
+//   }
+// };
+
 const authMiddleWare = async (req, res, next) => {
-  const token = req.cookies.token;
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
   if (!token)
     return res.status(401).json({
       success: false,
