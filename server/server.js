@@ -34,7 +34,11 @@ const PORT = process.env.PORT || 5000;
 // CORS setup to allow frontend requests
 app.use(
   cors({
-    origin: process.env.CLIENT_BASE_URL, // Make sure this matches your frontend address
+    // origin: process.env.CLIENT_BASE_URL, // Make sure this matches your frontend address
+    origin: [
+      "http://localhost:5173",
+      "https://e-commerce-mern-client-side.onrender.com",
+    ],
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
