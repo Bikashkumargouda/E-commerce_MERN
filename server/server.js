@@ -18,14 +18,8 @@ const commonFeatureRoutes = require("./routes/common/feature-routes");
 
 // Create a database connection
 mongoose
-  .connect(
-    process.env.MONGO_URL
-    // {
-    //   useNewUrlParser: true,
-    //   useUnifiedTopology: true, // These options are helpful for ensuring stable MongoDB connection
-    // }
-  )
-  .then(() => console.log("MongoDB Connected"))
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("✅ MongoDB Connected"))
   .catch((error) => console.error("MongoDB connection error:", error)); // Improved error handling
 
 const app = express();
@@ -34,11 +28,7 @@ const PORT = process.env.PORT || 5000;
 // CORS setup to allow frontend requests
 app.use(
   cors({
-    // origin: process.env.CLIENT_BASE_URL, // Make sure this matches your frontend address
-    origin: [
-      "http://localhost:5173",
-      "https://e-commerce-mern-client-side.onrender.com",
-    ],
+    origin: [process.env.CLIENT_BASE_URL],
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",

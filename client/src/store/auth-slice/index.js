@@ -1,89 +1,3 @@
-// import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-// import axios from "axios";
-
-// const initialState = {
-//   isAuthenticated: false,
-//   isloading: false,
-//   User: null,
-// };
-
-// // Register user
-// export const registerUser = createAsyncThunk(
-//   "/auth/register",
-
-//   async (formData) => {
-//     const response = await axios.post(
-//       `${import.meta.env.VITE_API_URL}/api/auth/register`,
-//       formData,
-//       {
-//         withCredentials: true,
-//       }
-//     );
-//     return response.data;
-//   }
-// );
-
-// // Login user
-// export const loginUser = createAsyncThunk(
-//   "/auth/login",
-
-//   async (formData) => {
-//     const response = await axios.post(
-//       `${import.meta.env.VITE_API_URL}/api/auth/login`,
-//       formData,
-//       {
-//         withCredentials: true,
-//       }
-//     );
-//     return response.data;
-//   }
-// );
-
-// const authSlice = createSlice({
-//   name: "auth",
-//   initialState,
-//   reducers: {
-//     setUser: (state, action) => {},
-//   },
-//   extraReducers: (builder) => {
-//     builder
-//       .addCase(registerUser.pending, (state) => {
-//         state.isLoading = true;
-//       })
-//       .addCase(registerUser.fulfilled, (state, action) => {
-//         state.isLoading = false;
-//         // state.User = null;\\commented
-//         state.User = action.payload.user; //added
-//         state.isAuthenticated = false;
-//       })
-//       .addCase(registerUser.rejected, (state, action) => {
-//         state.isLoading = false;
-//         state.User = null;
-//         state.isAuthenticated = false;
-//       })
-//       .addCase(loginUser.pending, (state) => {
-//         state.isLoading = true;
-//       })
-//       .addCase(loginUser.fulfilled, (state, action) => {
-//         state.isLoading = false;
-//         state.isAuthenticated = action.payload.success;
-//         state.User = action.payload.success ? action.payload.user : null;
-//         console.log(action);
-//       })
-//       .addCase(loginUser.rejected, (state, action) => {
-//         state.isLoading = false;
-//         state.User = null;
-//         state.isAuthenticated = false;
-//         // console.error(action.error.message);
-//       });
-//   },
-// });
-
-// export const { setUser } = authSlice.actions;
-// export default authSlice.reducer;
-
-// =============================================================================================================
-
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -134,6 +48,7 @@ export const logoutUser = createAsyncThunk("auth/logout", async () => {
   );
   return response.data;
 });
+
 // export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
 //   const response = await axios.get(
 //     `${import.meta.env.VITE_API_URL}/api/auth/checkauth`,

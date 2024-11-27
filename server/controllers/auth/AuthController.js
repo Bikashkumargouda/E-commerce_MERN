@@ -35,7 +35,6 @@ const registerUser = async (req, res) => {
 };
 
 // Login
-
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -77,7 +76,6 @@ const loginUser = async (req, res) => {
     //     userName: checkUser.userName,
     //   },
     // });
-
     res.status(200).json({
       success: true,
       message: "User Logged in successfully",
@@ -131,7 +129,9 @@ const logOutUser = (req, res) => {
 
 const authMiddleWare = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
+
   const token = authHeader && authHeader.split(" ")[1];
+
   if (!token)
     return res.status(401).json({
       success: false,
@@ -151,3 +151,5 @@ const authMiddleWare = async (req, res, next) => {
 };
 
 module.exports = { registerUser, loginUser, logOutUser, authMiddleWare };
+
+// ===========================================================================================================
