@@ -83,12 +83,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // Logout user by resetting the state
-    // logoutUser: (state) => {
-    //   state.isAuthenticated = false;
-    //   state.user = null;
-    //   state.error = null;
-    // },
     setUser: (state, action) => {},
     resetTokenAndCredentials: (state) => {
       state.isAuthenticated = false;
