@@ -128,74 +128,74 @@ const logOutUser = (req, res) => {
 // };
 // ===============================================
 
-// const authMiddleWare = async (req, res, next) => {
-//   const authHeader = req.headers.authorization;
-
-//   const token = authHeader && authHeader.split(" ")[1];
-
-//   if (!token)
-//     return res.status(401).json({
-//       success: false,
-//       message: "No token, authorization denied",
-//     });
-//   try {
-//     const decoded = jwt.verify(token, "CLIENT_SECRET_KEY");
-//     req.user = decoded;
-//     next();
-//   } catch (error) {
-//     console.error(error);
-//     res.status(401).json({
-//       success: false,
-//       message: "Token is not valid, authorization denied",
-//     });
-//   }
-// };
-
-// ===============================================
-
 const authMiddleWare = async (req, res, next) => {
-  try {
-    // Get the Authorization header
-    const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-    // Validate the header format
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "No token or invalid token format, authorization denied",
-      });
-    }
+  const token = authHeader && authHeader.split(" ")[1];
 
-    // Extract the token
-    const token = authHeader.split(" ")[1];
-
-    // Verify the token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "CLIENT_SECRET_KEY"
-    );
-
-    // Attach user data to the request
-    req.user = decoded;
-
-    // Proceed to the next middleware
-    next();
-  } catch (error) {
-    console.error("JWT verification error:", error.message);
-
-    // Handle specific JWT errors (optional)
-    let message = "Token is not valid, authorization denied";
-    if (error.name === "TokenExpiredError") {
-      message = "Token expired, please log in again";
-    } else if (error.name === "JsonWebTokenError") {
-      message = "Malformed token, authorization denied";
-    }
-
+  if (!token)
     return res.status(401).json({
       success: false,
-      message,
+      message: "No token, authorization denied",
+    });
+  try {
+    const decoded = jwt.verify(token, "CLIENT_SECRET_KEY");
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({
+      success: false,
+      message: "Token is not valid, authorization denied",
     });
   }
 };
+
+// ===============================================
+
+// const authMiddleWare = async (req, res, next) => {
+//   try {
+//     // Get the Authorization header
+//     const authHeader = req.headers.authorization;
+
+//     // Validate the header format
+//     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "No token or invalid token format, authorization denied",
+//       });
+//     }
+
+//     // Extract the token
+//     const token = authHeader.split(" ")[1];
+
+//     // Verify the token
+//     const decoded = jwt.verify(
+//       token,
+//       process.env.JWT_SECRET || "CLIENT_SECRET_KEY"
+//     );
+
+//     // Attach user data to the request
+//     req.user = decoded;
+
+//     // Proceed to the next middleware
+//     next();
+//   } catch (error) {
+//     console.error("JWT verification error:", error.message);
+
+//     // Handle specific JWT errors (optional)
+//     let message = "Token is not valid, authorization denied";
+//     if (error.name === "TokenExpiredError") {
+//       message = "Token expired, please log in again";
+//     } else if (error.name === "JsonWebTokenError") {
+//       message = "Malformed token, authorization denied";
+//     }
+
+//     return res.status(401).json({
+//       success: false,
+//       message,
+//     });
+//   }
+// };
 
 module.exports = { registerUser, loginUser, logOutUser, authMiddleWare };
