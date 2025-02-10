@@ -60,6 +60,7 @@ app.use(
 // );
 
 // Middleware setup
+
 app.use(cookieParser());
 app.use(express.json()); // To parse incoming JSON requests
 
