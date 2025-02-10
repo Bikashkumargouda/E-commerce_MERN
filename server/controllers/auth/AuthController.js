@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
   try {
     const checkUser = await User.findOne({ email });
     if (!checkUser) {
-      return res.json({
+      res.status(404).json({
         success: false,
         message: "User not found! Please register first.",
       });
@@ -50,7 +50,7 @@ const loginUser = async (req, res) => {
       checkUser.password
     );
     if (!checkPasswordMatch) {
-      return res.json({
+      res.status(404).json({
         success: false,
         message: "Invalid password! please try again",
       });
@@ -76,6 +76,7 @@ const loginUser = async (req, res) => {
     //     userName: checkUser.userName,
     //   },
     // });
+
     res.status(200).json({
       success: true,
       message: "User Logged in successfully",
@@ -106,7 +107,7 @@ const logOutUser = (req, res) => {
   });
 };
 
-// AuthMiddleware
+// AuthMiddleware;
 // const authMiddleWare = async (req, res, next) => {
 //   const token = req.cookies.token;
 //   if (!token)
@@ -129,7 +130,7 @@ const logOutUser = (req, res) => {
 // ===============================================
 
 const authMiddleWare = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers["authorization"];
 
   const token = authHeader && authHeader.split(" ")[1];
 
