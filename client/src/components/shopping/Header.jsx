@@ -12,7 +12,7 @@ import CartWrapper from './CartWrapper'
 import { fetchCartItems } from '@/store/shop/cart-slice'
 import { Label } from '../ui/label'
 
-function MenuiItems() {
+function MenuItems() {
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -31,9 +31,9 @@ function MenuiItems() {
 
   return <nav className='flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row '>
     {
-      shopppingViewHeaderMenuItems.map((menuItem) => {
+      shopppingViewHeaderMenuItems.map((menuItem, index) => {
         return (
-          <div key={menuItem.id}>
+          <div key={`${menuItem.id}-${index}`}>
             <Label onClick={() => handleNavigate(menuItem)} className='text-sm font-medium cursor-pointer'>{menuItem.label}</Label>
           </div>
         )
@@ -51,27 +51,37 @@ function HeaderRightContent() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  // function handleLogout() {
+  //   // dispatch(logoutUser())
+  //   dispatch(resetTokenAndCredentials())
+  //   sessionStorage.clear()
+  //   navigate("/auth/login")
+  // }
   function handleLogout() {
-    // dispatch(logoutUser())
-    dispatch(resetTokenAndCredentials())
-    sessionStorage.clear()
-    navigate("/auth/login")
+    dispatch(logoutUser()).then(() => {
+      dispatch(resetTokenAndCredentials());
+      sessionStorage.clear();
+      navigate("/auth/login");
+    });
   }
 
   useEffect(() => {
-    dispatch(fetchCartItems(user?.id))
-  }, [dispatch])
+    if (user?.id) {
+      dispatch(fetchCartItems(user?.id))
+    }
+
+  }, [dispatch, user?.id])
 
   // console.log(cartItems, "Bikash")
 
   return (
     <div className='flex lg:items-center lg:flex-row flex-col gap-4'>
 
-      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+      <Sheet open={openCartSheet} onOpenChange={(open) => setOpenCartSheet(open)}>
         <Button onClick={() => setOpenCartSheet(true)} variant="outline" size="icon" className="relative">
 
           <ShoppingCart className='w-8 h-8' />
-          <span className='absolute top-[-5px] right-[2px] text-sm font-bold'>{cartItems.items?.length || 0}</span>
+          <span className='absolute top-[-5px] right-[2px] text-sm font-bold'>{(cartItems?.items?.length ?? 0)}</span>
           <span className='sr-only'>User cart</span>
         </Button>
         <CartWrapper setOpenCartSheet={setOpenCartSheet} cartItems={cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
@@ -84,7 +94,7 @@ function HeaderRightContent() {
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" className="w-56">
+        <DropdownMenuContent side={window.innerWidth > 768 ? "right" : "bottom"} className="w-56">
           <DropdownMenuLabel>Logged in as {user?.userName} </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/shop/account")}>
@@ -124,12 +134,12 @@ const ShoppingHeader = () => {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-full max-w-xs">
-            <MenuiItems />
+            <MenuItems />
             <HeaderRightContent />
           </SheetContent>
         </Sheet>
         <div className='hidden lg:block'>
-          <MenuiItems />
+          <MenuItems />
         </div>
         <div className='hidden lg:block'>
           <HeaderRightContent />

@@ -64,30 +64,56 @@ export const logoutUser = createAsyncThunk("auth/logout", async () => {
 //   return response.data;
 // });
 
-export const checkAuth = createAsyncThunk("auth/checkauth", async (token) => {
-  const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/auth/checkauth`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Cache-Control":
-          "no-store, no-cache, must-revalidate,proxy-relativedate",
-        Expires: "0",
-      },
-    }
-  );
-  return response.data;
-});
+// ==========================================================
+
+// export const checkAuth = createAsyncThunk("auth/checkauth", async (token) => {
+//   const response = await axios.get(
+//     `${import.meta.env.VITE_API_URL}/api/auth/checkauth`,
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Cache-Control":
+//           "no-store, no-cache, must-revalidate,proxy-relativedate",
+//       },
+//     }
+//   );
+//   return response.data;
+// });
+
+// ================================================================
+export const checkAuth = createAsyncThunk(
+  "auth/checkauth",
+  async (_, { getState }) => {
+    const token = getState().auth.token || sessionStorage.getItem("token");
+    if (!token) throw new Error("No token found");
+
+    console.log("Sending token:", token);
+
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/auth/checkauth`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data;
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+    setUser: (state, action) => {
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    },
     resetTokenAndCredentials: (state) => {
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
+      sessionStorage.clear();
     },
   },
   extraReducers: (builder) => {
@@ -119,7 +145,8 @@ const authSlice = createSlice({
         state.isAuthenticated = action.payload.success ? true : false;
         state.user = action.payload.user; // Assuming the API returns the user data
         state.token = action.payload.token;
-        sessionStorage.setItem("token", JSON.stringify(action.payload.token));
+        sessionStorage.setItem("token", action.payload.token);
+        sessionStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -143,10 +170,12 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.error = action.payload || "Login failed"; // Handle error
       })
-      .addCase(logoutUser.fulfilled, (state, action) => {
+      .addCase(logoutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null; // Assuming the API returns the user data
+        state.token = null;
+        sessionStorage.clear();
       });
   },
 });

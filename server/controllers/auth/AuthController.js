@@ -63,7 +63,7 @@ const loginUser = async (req, res) => {
         email: checkUser.email,
         userName: checkUser.userName,
       },
-      "CLIENT_SECRET_KEY",
+      "JWT_SECRET",
       { expiresIn: "60m" }
     );
     // res.cookie("token", token, { httpOnly: true, secure: true }).json({
@@ -142,7 +142,7 @@ const authMiddleWare = async (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, "CLIENT_SECRET_KEY");
+    const decoded = jwt.verify(token, "JWT_SECRET");
     req.user = decoded;
     next();
   } catch (error) {
