@@ -37,6 +37,7 @@ const Login = () => {
     })
   }
 
+
   return (
     <div className='mx-auto w-full max-w-md space-y-6'>
       <div className='text-center'>
@@ -58,3 +59,4 @@ const Login = () => {
 }
 
 export default Login
+

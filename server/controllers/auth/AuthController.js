@@ -127,6 +127,7 @@ const logOutUser = (req, res) => {
 //     });
 //   }
 // };
+
 // ===============================================
 
 const authMiddleWare = async (req, res, next) => {

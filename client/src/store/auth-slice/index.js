@@ -25,16 +25,26 @@ export const registerUser = createAsyncThunk(
 );
 
 // Login user
-export const loginUser = createAsyncThunk("auth/login", async (formData) => {
-  const response = await axios.post(
-    `${import.meta.env.VITE_API_URL}/api/auth/login`,
-    formData,
-    {
-      withCredentials: true,
+
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue({
+        message: error.response?.data?.message || "Login failed",
+      });
     }
-  );
-  return response.data;
-});
+  }
+);
 
 // LogOut user
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
@@ -81,22 +91,43 @@ export const logoutUser = createAsyncThunk("auth/logout", async () => {
 // });
 
 // ================================================================
+// export const checkAuth = createAsyncThunk(
+//   "auth/checkauth",
+//   async (_, { getState }) => {
+//     const token = getState().auth.token || sessionStorage.getItem("token");
+//     if (!token) throw new Error("No token found");
+
+//     console.log("Sending token:", token);
+
+//     const response = await axios.get(
+//       `${import.meta.env.VITE_API_URL}/api/auth/checkauth`,
+//       {
+//         headers: { Authorization: `Bearer ${token}` },
+//       }
+//     );
+
+//     return response.data;
+//   }
+// );
+// =========================
 export const checkAuth = createAsyncThunk(
   "auth/checkauth",
-  async (_, { getState }) => {
-    const token = getState().auth.token || sessionStorage.getItem("token");
-    if (!token) throw new Error("No token found");
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token || sessionStorage.getItem("token");
+      if (!token) return rejectWithValue("Token not found");
 
-    console.log("Sending token:", token);
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/auth/checkauth`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/auth/checkauth`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    return response.data;
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Auth failed");
+    }
   }
 );
 
@@ -152,7 +183,15 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.error = action.payload || "Login failed"; // Handle error
+
+        console.error("Redux Login Error Payload:", action.payload); // Log payload
+
+        // Ensure error is always an object
+        state.error =
+          typeof action.payload === "string"
+            ? { message: action.payload }
+            : action.payload || { message: "Login failed" };
+
         state.token = null;
       })
       .addCase(checkAuth.pending, (state) => {
@@ -176,9 +215,14 @@ const authSlice = createSlice({
         state.user = null; // Assuming the API returns the user data
         state.token = null;
         sessionStorage.clear();
+      })
+      .addCase(logoutUser.rejected, () => {
+        sessionStorage.clear();
       });
   },
 });
 
 export const { setUser, resetTokenAndCredentials } = authSlice.actions;
 export default authSlice.reducer;
+
+// ===========================================================================================
